@@ -24,7 +24,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 modelToItemMethod: '&'
             },
             controllerAs: 'viewModel',
-            controller: function ($attrs) {
+            controller: ['$attrs', function ($attrs) {
                 var valueOrDefault = function (value, defaultValue) {
                     return !value ? defaultValue : value;
                 };
@@ -49,7 +49,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 this.items = [];
                 this.selectedItems = [];
                 this.searchQuery = undefined;
-            },
+            }],
             link: function (scope, element, attrs, controllers) {
 
                 // get the two needed controllers
