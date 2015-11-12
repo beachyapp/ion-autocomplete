@@ -1,7 +1,7 @@
 /*
  * ion-autocomplete 0.3.0
- * Copyright 2015 Danny Povolotski
- * Copyright modifications 2015 Guy Brand
+ * Copyright 2015 Danny Povolotski 
+ * Copyright modifications 2015 Guy Brand 
  * https://github.com/guylabs/ion-autocomplete
  */
 (function() {
@@ -60,7 +60,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 var randomCssClass = "ion-autocomplete-random-" + Math.floor((Math.random() * 1000) + 1);
 
                 var template = [
-                    '<div class="ion-autocomplete-container ' + randomCssClass + ' modal" style="display: none;">',
+                    '<div class="ion-autocomplete-container modal" style="display: none;">',
                     '<div class="bar bar-header item-input-inset">',
                     '<label class="item-input-wrapper">',
                     '<i class="icon ion-search placeholder-icon"></i>',
@@ -84,14 +84,26 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '</div>'
                 ].join('')
 
+                var applyUniqueClass = function (templateElem) {
+                    return templateElem.addClass(randomCssClass)
+                };
+                var bindCancel = function (templateElem) {
+                    // cancel handler for the cancel button which clears the search input field model and hides the
+                    // search container and the ionic backdrop
+                    templateElem.find('button').bind('click', function () {
+                        ionAutocompleteController.searchQuery = undefined;
+                        hideSearchContainer();
+                    });
+                    return templateElem;
+                };
                 // first check if a template url is set and use this as template
                 if (ionAutocompleteController.templateUrl) {
                     $templateRequest(ionAutocompleteController.templateUrl).then(function (template) {
-                        $document.find('body').append($compile(angular.element(template))(scope));
+                        $document.find('body').append(bindCancel(applyUniqueClass($compile(angular.element(template))(scope))));
                     });
                 } else {
                     // only append the container to the body if there is no container already present (if multiple components are used)
-                    $document.find('body').append($compile(angular.element(template))(scope));
+                    $document.find('body').append(bindCancel(applyUniqueClass($compile(angular.element(template))(scope))));
                 }
 
                 // returns the value of an item
