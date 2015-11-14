@@ -74,26 +74,29 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '</div>'
                 ].join('')
 
+                // get the compiled search field
+                var searchInputElement;
                 var applyUniqueClass = function (templateElem) {
                     return templateElem.addClass(randomCssClass)
                 };
-                var bindCancel = function (templateElem) {
+                var bindListeners = function (templateElem) {
                     // cancel handler for the cancel button which clears the search input field model and hides the
                     // search container and the ionic backdrop
                     templateElem.find('button').bind('click', function () {
                         ionAutocompleteController.searchQuery = undefined;
                         hideSearchContainer();
                     });
+                    searchInputElement = templateElem.find('input');
                     return templateElem;
                 };
                 // first check if a template url is set and use this as template
                 if (ionAutocompleteController.templateUrl) {
                     $templateRequest(ionAutocompleteController.templateUrl).then(function (template) {
-                        $document.find('body').append(bindCancel(applyUniqueClass($compile(angular.element(template))(scope))));
+                        $document.find('body').append(bindListeners(applyUniqueClass($compile(angular.element(template))(scope))));
                     });
                 } else {
                     // only append the container to the body if there is no container already present (if multiple components are used)
-                    $document.find('body').append(bindCancel(applyUniqueClass($compile(angular.element(template))(scope))));
+                    $document.find('body').append(bindListeners(applyUniqueClass($compile(angular.element(template))(scope))));
                 }
 
                 // returns the value of an item
@@ -117,9 +120,6 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     }
                     return item;
                 };
-
-                // get the compiled search field
-                var searchInputElement = angular.element($document[0].querySelector('div.ion-autocomplete-container.' + randomCssClass + ' input'));
 
                 // function which selects the item, hides the search container and the ionic backdrop if it is not a multiple select autocomplete
                 ionAutocompleteController.selectItem = function (item) {
